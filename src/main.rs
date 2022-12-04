@@ -1,6 +1,7 @@
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 #[cfg(test)]
 mod testmacros;
 
@@ -13,7 +14,7 @@ struct Solution {
     part2: fn(&str) -> Result<String, Box<dyn Error + '_>>,
 }
 
-const SOLUTIONS: &[Solution] = &[day1::DAY1, day2::DAY2, day3::DAY3];
+const SOLUTIONS: &[Solution] = &[day1::DAY1, day2::DAY2, day3::DAY3, day4::DAY4];
 
 const USAGE: &str = "advent-of-code-2022
 USAGE:
