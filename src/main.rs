@@ -6,6 +6,7 @@ mod day5;
 mod day6;
 mod day7;
 mod day8;
+mod day9;
 #[cfg(test)]
 mod testmacros;
 
@@ -27,6 +28,7 @@ const SOLUTIONS: &[Solution] = &[
     day6::DAY6,
     day7::DAY7,
     day8::DAY8,
+    day9::DAY9,
 ];
 
 const USAGE: &str = "advent-of-code-2022
