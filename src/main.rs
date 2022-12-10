@@ -1,4 +1,7 @@
+#![recursion_limit = "256"]
+
 mod day1;
+mod day10;
 mod day2;
 mod day3;
 mod day4;
@@ -29,6 +32,7 @@ const SOLUTIONS: &[Solution] = &[
     day7::DAY7,
     day8::DAY8,
     day9::DAY9,
+    day10::DAY10,
 ];
 
 const USAGE: &str = "advent-of-code-2022
