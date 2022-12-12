@@ -34,7 +34,7 @@ fn run_search(
             break;
         }
     }
-    return Err("Unable to reach best signal".into());
+    Err("Unable to reach best signal".into())
 }
 
 pub(super) const DAY12: Solution = Solution {
