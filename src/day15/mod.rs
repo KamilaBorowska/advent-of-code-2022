@@ -9,6 +9,12 @@ struct Sensor {
     beacon_y: i32,
 }
 
+impl Sensor {
+    fn distance(&self) -> u32 {
+        self.sensor_x.abs_diff(self.beacon_x) + self.sensor_y.abs_diff(self.beacon_y)
+    }
+}
+
 fn parse_sensor(line: &str) -> Result<Sensor, Box<dyn Error>> {
     let rest = line
         .strip_prefix("Sensor at x=")
@@ -36,14 +42,11 @@ fn parse_sensors(input: &str) -> Result<Vec<Sensor>, Box<dyn Error>> {
 
 fn get_ranges(sensors: &[Sensor], row: i32) -> Vec<Range<i32>> {
     let mut ranges: Vec<Range<i32>> = Vec::new();
-    for &Sensor {
-        sensor_x,
-        sensor_y,
-        beacon_x,
-        beacon_y,
+    for sensor @ &Sensor {
+        sensor_x, sensor_y, ..
     } in sensors
     {
-        let distance = sensor_x.abs_diff(beacon_x) + sensor_y.abs_diff(beacon_y);
+        let distance = sensor.distance();
         let y_diff = row.abs_diff(sensor_y);
         let width = match distance.checked_sub(y_diff) {
             Some(0) | None => continue,
@@ -82,10 +85,31 @@ fn find_invalid_beacon_positions(sensors: &[Sensor], row: i32) -> Result<usize, 
 
 fn part2<const SEARCH_SPACE: i32>(input: &str) -> Result<String, Box<dyn Error>> {
     let sensors = parse_sensors(input)?;
-    for row in 0..SEARCH_SPACE {
-        let ranges = get_ranges(&sensors, row);
-        if let [a, b] = ranges.as_slice() {
-            return Ok((i64::from(a.end.min(b.end)) * 4_000_000 + i64::from(row)).to_string());
+    for sensor @ &Sensor {
+        sensor_x, sensor_y, ..
+    } in &sensors
+    {
+        let distance = (sensor.distance() + 1) as i32;
+        for x_offset in 0..distance * 2 + 1 {
+            let x_middle_distance = distance.abs_diff(x_offset) as i32;
+            let y_offset = distance - x_middle_distance;
+            'y: for y in [sensor_y - y_offset, sensor_y + y_offset] {
+                if y < 0 || y >= SEARCH_SPACE {
+                    continue;
+                }
+                let x = sensor_x + x_offset - distance;
+                if x < 0 || x >= SEARCH_SPACE {
+                    continue;
+                }
+                for sensor in &sensors {
+                    if sensor.sensor_x.abs_diff(x) + sensor.sensor_y.abs_diff(y)
+                        <= sensor.distance()
+                    {
+                        continue 'y;
+                    }
+                }
+                return Ok((i64::from(x) * 4_000_000 + i64::from(y)).to_string());
+            }
         }
     }
     Err("Unable to find tuning frequency".into())
